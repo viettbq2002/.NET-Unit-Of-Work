@@ -44,9 +44,9 @@ namespace UnitOfWork.Services.Implements
             return products;
         }
 
-        public Task<Product> GetProductById(int id)
+        public async Task<Product> GetProductById(int id)
         {
-            throw new NotImplementedException();
+            return await _unitOfWork.Products.GetByIdAsync(id) ?? throw new KeyNotFoundException("Product not found");
         }
 
         public async Task UpdateProduct(UpdateProduct request , int productId)

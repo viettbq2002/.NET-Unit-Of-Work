@@ -12,42 +12,64 @@ namespace UnitOfWork.Infrastructure.Repositories
     public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         protected readonly DbContextClass _context;
+        private readonly DbSet<T> _dbSet;
 
         protected GenericRepository(DbContextClass context)
         {
             _context = context;
+            _dbSet = context.Set<T>();
         }
             
         public async Task<T> AddAsync(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            await _dbSet.AddAsync(entity);
             return entity;
         }
 
         public void Delete(T entity)
         {
-            _context.Set<T>().Remove(entity);
-        }
-
-        public async Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+            _dbSet.Remove(entity);
         }
 
        
+       
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _dbSet.FindAsync(id);
         }
 
         public async Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
+            return await _dbSet.AsNoTracking().Where(predicate).ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>>? predicate, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet.AsNoTracking();
+            foreach (var include in includes) {
+                query = query.Include(include);
+            }
+            if (predicate != null) {
+                query = query.Where(predicate);
+            }
+            return await query.ToListAsync();
+        }
+
+        public async Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var includeProperty in includes)
+            {
+                query = query.Include(includeProperty);
+            }
+            return await query.FirstOrDefaultAsync(predicate);
+
         }
 
         public void Update(T entity)

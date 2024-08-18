@@ -11,8 +11,8 @@ namespace UnitOfWork.Core.Interfaces
     {
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
-        Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>> predicate);
-        Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>>? predicate , params Expression<Func<T, object>>[] includes);
+        Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate , params Expression<Func<T, object>>[] includes);
 
         Task<T> AddAsync (T entity);
 

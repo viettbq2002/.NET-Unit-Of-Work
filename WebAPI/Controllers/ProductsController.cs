@@ -17,17 +17,31 @@ namespace WebAPI.Controllers
             _productService = productService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetListProduct() {
+        public async Task<IActionResult> GetListProductAsync() {
             var products =  await _productService.GetAllProducts();
             return Ok(products);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProduct request)
+        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProduct request)
         {
             
             await _productService.CreateProduct(request);
-            return Ok();
+            return Created(string.Empty, request);
             
+        }
+        [HttpGet("/{productId}")]
+        public async Task<IActionResult> GetProductAsync(int productId)
+        {
+            try {
+                var product = await _productService.GetProductById(productId);
+                return Ok(product);
+
+            } catch (KeyNotFoundException e ) 
+            {
+                return NotFound(e.Message);
+
+            }
+
         }
         [HttpDelete("/{productId}")]
         public async Task<IActionResult> DeleteProductAsync(int productId)
@@ -43,7 +57,7 @@ namespace WebAPI.Controllers
 
         }
         [HttpPut("/{productId}")]
-        public async Task<IActionResult> UpdateProduct(int productId, [FromBody] UpdateProduct product)
+        public async Task<IActionResult> UpdateProductAsync(int productId, [FromBody] UpdateProduct product)
         {
             try
             {
@@ -54,7 +68,6 @@ namespace WebAPI.Controllers
             {
                 return NotFound(e.Message);
             }
-            return Ok();
 
         }
     }
