@@ -51,9 +51,12 @@ namespace UnitOfWork.Infrastructure.Repositories
         public async Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>>? predicate, params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _dbSet.AsNoTracking();
-            foreach (var include in includes) {
-                query = query.Include(include);
+            if (includes.Length > 0)
+            {
+
+                query = ApplyIncludes(query, includes);
             }
+            
             if (predicate != null) {
                 query = query.Where(predicate);
             }
@@ -63,13 +66,22 @@ namespace UnitOfWork.Infrastructure.Repositories
         public async Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _dbSet;
-
-            foreach (var includeProperty in includes)
+            if (includes.Length > 0 )
             {
-                query = query.Include(includeProperty);
+                query = ApplyIncludes(query, includes);
             }
+
+           
             return await query.FirstOrDefaultAsync(predicate);
 
+        }
+        private static IQueryable<T> ApplyIncludes(IQueryable<T> query, params Expression<Func<T, object>>[] includes)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return query;
         }
 
         public void Update(T entity)
@@ -78,5 +90,38 @@ namespace UnitOfWork.Infrastructure.Repositories
             
         }
 
+        public async Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification)
+        {
+            IQueryable<T> query = _dbSet.AsNoTracking();
+
+            if (specification.Includes.Count > 0)
+            {
+                query = ApplyIncludes(query, specification.Includes.ToArray());
+            }
+
+            if (specification.ToExpression() != null)
+            {
+                query = query.Where(specification.ToExpression());
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<T?> GetOneBySpecificationAsync(ISpecification<T> specification)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (specification.Includes.Count > 0)
+            {
+                query = ApplyIncludes(query, specification.Includes.ToArray());
+            }
+
+            if (specification.ToExpression() != null)
+            {
+                query = query.Where(specification.ToExpression());
+            }
+
+            return await query.FirstOrDefaultAsync();
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace UnitOfWork.Core.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> SelectManyAsync(Expression<Func<T, bool>>? predicate , params Expression<Func<T, object>>[] includes);
         Task<T?> SelectOneAsync(Expression<Func<T, bool>> predicate , params Expression<Func<T, object>>[] includes);
+        Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification);
+        Task <T?> GetOneBySpecificationAsync(ISpecification<T> specification);
 
         Task<T> AddAsync (T entity);
 
