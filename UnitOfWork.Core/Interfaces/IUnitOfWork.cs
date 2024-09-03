@@ -11,6 +11,5 @@ namespace UnitOfWork.Core.Interfaces
         IProductRepository Products { get; }
         int Save();
         Task<int> SaveAsync();
-
     }
 }

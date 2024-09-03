@@ -16,10 +16,6 @@ namespace UnitOfWork.Services.Error
             StatusCode = statusCode;
         }
 
-
-
-
-
         public int StatusCode { get; set; }
     }
 }

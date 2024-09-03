@@ -16,11 +16,13 @@ namespace UnitOfWork.Services.Implements
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cacheService;
 
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _cacheService = cacheService;
         }
 
         public async Task CreateProduct(CreateProduct request)
@@ -49,13 +51,27 @@ namespace UnitOfWork.Services.Implements
 
         public async Task<IEnumerable<Product>> GetAllProducts()
         {
-            var products = await _unitOfWork.Products.GetAllAsync();
+            var products = await _cacheService.GetData<IEnumerable<Product>>("products:list");
+            if(products is not null)
+            {
+                return products;
+            }
+            products = await _unitOfWork.Products.GetAllAsync();
+            await _cacheService.SetData<IEnumerable<Product>>("products:list",products);
             return products;
         }
 
         public async Task<Product> GetProductById(int id)
         {
-            return await _unitOfWork.Products.GetByIdAsync(id) ?? throw new NotFoundException("Product Not Found");
+            var product = await _cacheService.GetData<Product>($"product:{id}");
+            if(product is not null)
+            {
+                return product;
+            }
+            product = await _unitOfWork.Products.GetByIdAsync(id) ?? throw new NotFoundException("Product Not Found");
+            await _cacheService.SetData<Product>($"product:{id}", product);
+
+            return product;
         }
 
         public async Task UpdateProduct(UpdateProduct request , int productId)
