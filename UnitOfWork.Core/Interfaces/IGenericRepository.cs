@@ -16,6 +16,7 @@ namespace UnitOfWork.Core.Interfaces
         Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification);
         Task <T?> GetOneBySpecificationAsync(ISpecification<T> specification);
 
+        Task<List<T>> AddRangeAsync (List<T> items);
         Task<T> AddAsync (T entity);
 
         void Update (T entity);

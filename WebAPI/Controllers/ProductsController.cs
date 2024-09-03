@@ -21,15 +21,14 @@ namespace WebAPI.Controllers
             var products =  await _productService.GetAllProducts();
             return Ok(products);
         }
+       
         [HttpPost]
-        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProduct request)
+        public async Task<IActionResult> CreateProductsAsync([FromBody] List<CreateProduct> request)
         {
-            
-            await _productService.CreateProduct(request);
+            await _productService.CreateProductBulk(request);
             return Created(string.Empty, request);
-            
         }
-        [HttpGet("/{productId}")]
+        [HttpGet("{productId}")]
         public async Task<IActionResult> GetProductAsync(int productId)
         {
             try {
@@ -43,7 +42,7 @@ namespace WebAPI.Controllers
             }
 
         }
-        [HttpDelete("/{productId}")]
+        [HttpDelete("{productId}")]
         public async Task<IActionResult> DeleteProductAsync(int productId)
         {
             try
@@ -56,7 +55,7 @@ namespace WebAPI.Controllers
             }
 
         }
-        [HttpPut("/{productId}")]
+        [HttpPut("{productId}")]
         public async Task<IActionResult> UpdateProductAsync(int productId, [FromBody] UpdateProduct product)
         {
             try

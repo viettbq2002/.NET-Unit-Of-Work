@@ -14,7 +14,7 @@ namespace UnitOfWork.Services.Specification
 
         public abstract Expression<Func<T, bool>> ToExpression();
 
-        public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
+        public List<Expression<Func<T, object>>> Includes { get; } = new();
 
         protected virtual void AddInclude(Expression<Func<T, object>> includeExpression)
         {

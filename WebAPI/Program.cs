@@ -3,11 +3,12 @@ using UnitOfWork.Infrastructure.ServiceExtensions;
 using UnitOfWork.Services;
 using UnitOfWork.Services.Implements;
 using UnitOfWork.Services.Interfaces;
+using WebAPI.Filter;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(_ => _.Filters.Add<ErrorHandlingFilterAttribute>());
 builder.Services.AddHttpLogging(o =>
 
 {

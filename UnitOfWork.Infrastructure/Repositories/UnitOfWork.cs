@@ -7,15 +7,10 @@ using UnitOfWork.Core.Interfaces;
 
 namespace UnitOfWork.Infrastructure.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(DbContextClass context, IProductRepository productRepository) : IUnitOfWork
     {
-        public IProductRepository Products { get; }
-        private readonly DbContextClass _context;
-        public UnitOfWork(DbContextClass context , IProductRepository productRepository)
-        {
-            _context = context;
-            Products = productRepository;
-        }
+        public IProductRepository Products { get; } = productRepository;
+        private readonly DbContextClass _context = context;
 
         public void Dispose()
         {

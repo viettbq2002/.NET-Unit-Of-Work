@@ -123,5 +123,11 @@ namespace UnitOfWork.Infrastructure.Repositories
 
             return await query.FirstOrDefaultAsync();
         }
+
+        public async Task<List<T>> AddRangeAsync(List<T> items)
+        {
+            await _dbSet.AddRangeAsync(items);
+            return items;
+        }
     }
 }

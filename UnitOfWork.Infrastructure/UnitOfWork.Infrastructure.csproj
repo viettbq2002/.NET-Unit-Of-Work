@@ -13,4 +13,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\UnitOfWork.Core\UnitOfWork.Core.csproj" />
 	</ItemGroup>
+
 </Project>

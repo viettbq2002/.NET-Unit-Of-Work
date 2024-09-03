@@ -15,6 +15,7 @@ namespace UnitOfWork.Services.Interfaces
         Task<Product> GetProductById(int id);
         Task UpdateProduct(UpdateProduct request, int productId);
         Task DeleteProduct(int productId);
+        Task<List<Product>> CreateProductBulk(List<CreateProduct> requests);
 
     }
 }
